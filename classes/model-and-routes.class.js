@@ -1,9 +1,4 @@
 const qs = require('qs');
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/mongo_books');
-const db = mongoose.connection;
-db.on('error', (e)=>{ console.error(e); });
-db.once('open', ()=>{ console.info('db connected');});
 
 module.exports = class ModelAndRoutes {
 
@@ -14,16 +9,17 @@ module.exports = class ModelAndRoutes {
     return {};
   }
 
-  constructor(expressApp){
+  constructor(expressApp, routes = ['post','get', 'put', 'delete']){
+    if(!expressApp){ routes = []; }
     this.expressApp = expressApp;
     let schema = new mongoose.Schema(this.constructor.schema);
     this.modelName = this.constructor.name;
     this.routeName = this.modelName.toLowerCase() + 's';
     this.myModel = mongoose.model(this.modelName, schema);
-    this.setupPostRoute();
-    this.setupGetRoute();
-    this.setupDeleteRoute();
-    this.setupPutRoute();
+    routes.includes('post') && this.setupPostRoute();
+    routes.includes('get') && this.setupGetRoute();
+    routes.includes('put') && this.setupPutRoute();
+    routes.includes('delete') && this.setupDeleteRoute();
   }
 
   setupImportRoute(arrayOfObjects){
@@ -56,7 +52,7 @@ module.exports = class ModelAndRoutes {
 
       // check if params is a stringified object
       try {
-        let obj = JSON.parse(req.params[0]);
+        let obj = JSON.parse(req._params ? req._params[0] : req.params[0]);
         if(typeof obj == 'object'){
           params = obj;
         }
@@ -64,9 +60,7 @@ module.exports = class ModelAndRoutes {
       catch(e){}
 
       // get params
-      params = params || qs.parse(req.params[0]);
-
-      console.log("PPPP",params)
+      params = params || qs.parse(req._params ? req._params[0] : req.params[0]);
 
       // Get populate instructions
       // and then delete them from the Mongo query params
@@ -76,8 +70,8 @@ module.exports = class ModelAndRoutes {
       this.myModel.find(params).populate(populate).exec((err, data)=>{
         res.json({
           query:params,
-          resultLength: data.length,
-          result: data
+          resultLength: data ? data.length : 0,
+          result: data || []
         });
       });
     });
@@ -87,7 +81,7 @@ module.exports = class ModelAndRoutes {
 
     this.expressApp.delete(`/${this.routeName}/?*`, (req, res) => {
       // get params
-      let params = qs.parse(req.params[0]);
+      let params = qs.parse(req._params ? req._params[0] : req.params[0]);
       this.myModel.find(params, (err, data) => {
         if(err){
           res.json(err);
@@ -125,7 +119,7 @@ module.exports = class ModelAndRoutes {
   setupPutRoute(){
     this.expressApp.put(`/${this.routeName}/?*`, (req, res) => {
       // get params
-      let params = qs.parse(req.params[0]);
+      let params = qs.parse(req._params ? req._params[0] : req.params[0]);
       this.myModel.find(params, (err, data) => {
         if(err){
           res.json(err);
