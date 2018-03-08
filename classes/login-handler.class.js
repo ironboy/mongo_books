@@ -9,13 +9,13 @@ module.exports = class LoginHandler {
   }
 
   loginRoute(){
-    this.expressApp.get('/login/?*', (req, res) => {
+    this.expressApp.get('/logins/?*', (req, res) => {
 
       if(req.session && req.session.data && req.session.data.user){
         res.json({
-          loginOk: 'Already loggged in',
+          loginOk: 'Already logged in',
           resultLength: 1,
-          result: req.session.data.user
+          result: [req.session.data.user]
         });
         return;
       }
@@ -58,19 +58,21 @@ module.exports = class LoginHandler {
   }
 
   logoutRoute(){
-    this.expressApp.get('/logout', (req,res) => {
+    this.expressApp.get('/logouts', (req,res) => {
       if(req.session && req.session.data && req.session.data.user){
         delete req.session.data.user;
         req.session.markModified('data');
         req.session.save(() => {
           res.json({
-            result: 'User logged out'
+            logoutOk: 'User logged out.',
+            result: []
           });
         });
       }
       else {
         res.json({
-          result: 'No user logged in. So no log out.'
+          logoutOk: 'No user to log out.',
+          result: []
         });
       }
     });
