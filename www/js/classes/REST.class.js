@@ -40,11 +40,14 @@ class REST {
 
     let entity = (this.name + 's').toLowerCase();
     let results = await REST.request(entity,'GET',query,'');
+    let orgresults = results;
     results = results.result || [results];
+    delete orgresults.result;
     let enriched = [];
     for(let result of results){
       enriched.push(new this(result));
     }
+    enriched.info = orgresults;
     return enriched;
   }
 
