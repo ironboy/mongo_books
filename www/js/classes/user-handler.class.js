@@ -22,6 +22,16 @@ class UserHandler {
     });
   }
 
+  static async registerAndLogin(email, password){
+    await this.logout();
+    let result =  await User.create({
+      email: email,
+      password: password
+    });
+    await this.login(email, password);
+    return result;
+  }
+
   static async unregister(){
     let user = await User.findOne('');
     if(!user){ return {error: 'No such user' }; }

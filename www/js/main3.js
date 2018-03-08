@@ -6,6 +6,7 @@ $(()=>{
     <button>login</button>
     <button>logout</button>
     <button>register</button>
+    <button>registerAndLogin</button>
     <button>unregister</button>
     <button>change</button>
     <pre></pre>
@@ -14,7 +15,7 @@ $(()=>{
   $('button').click(async function(){
     let email, password, propsToChange;
     let demo = $(this).text();
-    if(['login', 'register'].includes(demo)){
+    if(['login', 'register', 'registerAndLogin'].includes(demo)){
       email = prompt('Email');
       password = prompt('Password');
     }
