@@ -1,5 +1,9 @@
 const booksJson = require('./books.json');
 const mongoose = require('mongoose');
+global.mongoose = mongoose;
+global.Schema = mongoose.Schema;
+const ModelAndRoutes = require('./classes/model-and-routes.class');
+global.ModelAndRoutes = ModelAndRoutes;
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
