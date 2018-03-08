@@ -21,7 +21,6 @@ module.exports = class SessionHandler {
     else {
       // Retrieve a session from a session cookie value
       this.Session.find({_id:req.cookies.session}, (err, sessions)=>{
-        console.log('sessions', sessions);
         if(sessions[0]){
           req.session = sessions[0];
           req.session.data = req.session.data || {};
