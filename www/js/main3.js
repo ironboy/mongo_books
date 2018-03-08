@@ -1,7 +1,7 @@
 // Test of the UserHandler class
 $(()=>{
   $('body').append(`
-    <p><b>Note:</b To try logout, unregister and change - login first!</p>
+    <p><b>Note:</b> To try logout, unregister and change - login first!</p>
     <button>check</button>
     <button>login</button>
     <button>logout</button>
