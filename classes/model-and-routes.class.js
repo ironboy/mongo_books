@@ -40,7 +40,14 @@ module.exports = class ModelAndRoutes {
       entity.save(() => {
         // Newly created and saved Mongoose object
         // with  _id and __v properties
-        res.json(entity);
+        this.myModel.find({_id:entity._id}, (err,data)=>{
+          if(!data || !data.length){
+            res.json({error: 'Not created.'});
+          }
+          else {
+            res.json(entity);
+          }
+        });
       });
     });
   }
@@ -80,13 +87,27 @@ module.exports = class ModelAndRoutes {
   setupDeleteRoute(){
 
     this.expressApp.delete(`/${this.routeName}/?*`, (req, res) => {
+
+      let params;
+
+      // check if params is a stringified object
+      try {
+        let obj = JSON.parse(req._params ? req._params[0] : req.params[0]);
+        if(typeof obj == 'object'){
+          params = obj;
+        }
+      }
+      catch(e){}
+
       // get params
-      let params = qs.parse(req._params ? req._params[0] : req.params[0]);
+      params = params || qs.parse(req._params ? req._params[0] : req.params[0]);
+
       this.myModel.find(params, (err, data) => {
         if(err){
           res.json(err);
         }
         else {
+          console.log("BBB",data)
           let numberOfItems = data.length;
           let response = {numberOfItems: numberOfItems};
           if(numberOfItems === 0){
@@ -118,8 +139,20 @@ module.exports = class ModelAndRoutes {
 
   setupPutRoute(){
     this.expressApp.put(`/${this.routeName}/?*`, (req, res) => {
+      let params;
+
+      // check if params is a stringified object
+      try {
+        let obj = JSON.parse(req._params ? req._params[0] : req.params[0]);
+        if(typeof obj == 'object'){
+          params = obj;
+        }
+      }
+      catch(e){}
+
       // get params
-      let params = qs.parse(req._params ? req._params[0] : req.params[0]);
+      params = params || qs.parse(req._params ? req._params[0] : req.params[0]);
+
       this.myModel.find(params, (err, data) => {
         if(err){
           res.json(err);
