@@ -2,7 +2,7 @@ module.exports = class User extends ModelAndRoutes {
 
   static get schema(){
     return {
-      email: String,
+      email: { type: String, index: { unique: true }},
       password: String
     }
   }
