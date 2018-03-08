@@ -24,10 +24,7 @@ class UserHandler {
 
   static async registerAndLogin(email, password){
     await this.logout();
-    let result =  await User.create({
-      email: email,
-      password: password
-    });
+    let result =  this.register(email, password);
     await this.login(email, password);
     return result;
   }
