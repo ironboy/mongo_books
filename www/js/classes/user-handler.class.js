@@ -41,7 +41,7 @@ class UserHandler {
     let user = await User.findOne('');
     if(!user){ return {error: 'No such user' }; }
     delete props.email;
-    Object.assign(user,props);
+    Object.assign(user, props);
     await user.save();
     await this.logout();
     await this.login(user.email, user.password);
